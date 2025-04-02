@@ -29,6 +29,10 @@ class User {
         return $this->user_ID;
     }
 
+    public function setUserID(int $user_ID) {
+        $this->user_ID = $user_ID;
+    }
+
     public function getAnrede(): string {
         return $this->anrede;
     }
