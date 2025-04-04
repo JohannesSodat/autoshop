@@ -1,5 +1,6 @@
 <?php
-session_start();
+    session_start();
+    require_once("dbconnection.php");
 
 // Gesamtpreis berechnen
 $gesamtpreis = 0;

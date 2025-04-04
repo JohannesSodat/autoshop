@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    require_once("dbconnection.php");
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="de">
 <head>

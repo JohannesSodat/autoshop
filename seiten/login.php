@@ -1,5 +1,6 @@
 <?php
-session_start();
+    session_start();
+    require_once("dbconnection.php");
 ?>
 
 <!DOCTYPE html>
@@ -92,13 +93,17 @@ session_start();
 <div class="container">
     <h2>Login</h2>
     <form method="post" action="login_verarbeiten.php">
-        <label for="username">Benutzername:</label>
-        <input type="text" name="username" required><br><br>
+        <label for="vorname">Vorname:</label>
+        <input type="text" name="vorname" required><br><br>
+
+        <label for="nachname">Nachname:</label>
+        <input type="text" name="nachname" required><br><br>
 
         <label for="passwort">Passwort:</label>
         <input type="password" name="passwort" required><br><br>
 
         <input type="submit" value="Login">
+        <p>Du hast noch kein Konto? <a href="registrierung.php">Jetzt registrieren</a></p>
     </form>
 
     <?php
