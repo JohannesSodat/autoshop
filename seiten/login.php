@@ -10,10 +10,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        html, body {
+            height: 100%;
             margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
         }
         header {
             background-color: rgb(25, 115, 205);
@@ -47,6 +51,7 @@
             padding: 20px;
             border: 1px solid #ddd;
             background-color: #f9f9f9;
+            flex: 1;
         }
         input[type="text"], input[type="password"], input[type="submit"] {
             width: 100%;
@@ -66,9 +71,6 @@
             background-color: #f1f1f1;
             text-align: center;
             padding: 15px;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
         }
         footer a {
             margin: 0 10px;

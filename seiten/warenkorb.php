@@ -1,6 +1,44 @@
 <?php
-    session_start();
-    require_once("dbconnection.php");
+session_start();
+require_once("dbconnection.php");
+
+// Prüfen, ob der Warenkorb existiert, andernfalls initialisieren
+if (!isset($_SESSION['warenkorb'])) {
+    $_SESSION['warenkorb'] = [];
+}
+
+// Falls ein Produkt hinzugefügt wird
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["auto_id"])) {
+    $auto_id = intval($_POST["auto_id"]);
+
+    // Produkt aus der Datenbank holen
+    $sql = "SELECT * FROM auto WHERE aID = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$auto_id]);
+    $auto = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($auto) {
+        // Produkt zum Warenkorb hinzufügen (mit Produktdetails)
+        $produkt = [
+            'id' => $auto['aID'],
+            'name' => $auto['bezeichnung'],
+            'preis' => $auto['preis'],
+        ];
+
+        // Überprüfen, ob das Produkt bereits im Warenkorb ist
+        $exists = false;
+        foreach ($_SESSION['warenkorb'] as $item) {
+            if ($item['id'] === $produkt['id']) {
+                $exists = true;
+                break;
+            }
+        }
+
+        if (!$exists) {
+            $_SESSION['warenkorb'][] = $produkt;
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +48,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warenkorb</title>
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -79,8 +117,6 @@
             text-decoration: none;
             color: black;
         }   
-        
-        
     </style>
 </head>
 <body>
@@ -99,14 +135,6 @@
     <h2>Produkte im Warenkorb:</h2>
 
     <?php
-    // Falls der Warenkorb noch nicht existiert, erstellen
-    if (!isset($_SESSION['warenkorb'])) {
-        $_SESSION['warenkorb'] = [];
-    }
-
-    // Beispielprodukt hinzufügen (nur für Testzwecke, später aus Produktseite befüllen)
-    // $_SESSION['warenkorb'][] = ["name" => "BMW X5", "preis" => 59999.99];
-
     if (empty($_SESSION['warenkorb'])) {
         echo "<p>Dein Warenkorb ist leer.</p>";
     } else {
@@ -127,9 +155,9 @@
     </div>
 </div>
 
-</body>
-
 <footer>
     <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
 </footer>
+
+</body>
 </html>

@@ -1,6 +1,6 @@
 <?php
-    session_start();
-    require_once("dbconnection.php");
+session_start();
+require_once("dbconnection.php");
 
 // Gesamtpreis berechnen
 $gesamtpreis = 0;
@@ -10,11 +10,31 @@ if (isset($_SESSION['warenkorb']) && !empty($_SESSION['warenkorb'])) {
     }
 }
 
-// Falls kein Warenkorb vorhanden ist oder leer
 if ($gesamtpreis == 0) {
     die("Dein Warenkorb ist leer. <a href='warenkorb.php'>Zurück zum Warenkorb</a>");
 }
 
+// Benutzerinfos vorbereiten
+$vorname = "";
+$nachname = "";
+$adresse = "";
+
+// Prüfen, ob Benutzer eingeloggt ist
+if (isset($_SESSION['user_id'])) {
+    try {
+        $stmt = $pdo->prepare("SELECT vorname, nachname, adresse FROM user WHERE id = :id");
+        $stmt->execute([':id' => $_SESSION['user_id']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            $vorname = $user['vorname'];
+            $nachname = $user['nachname'];
+            $adresse = $user['adresse'];
+        }
+    } catch (PDOException $e) {
+        echo "Fehler beim Abrufen der Benutzerdaten: " . $e->getMessage();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +47,10 @@ if ($gesamtpreis == 0) {
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            text-align: center; /* Zentriert alle Texte standardmäßig */
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         header {
             background-color: rgb(25, 115, 205);
@@ -57,21 +80,26 @@ if ($gesamtpreis == 0) {
         }
         main {
             padding: 50px 20px;
+            flex: 1;
         }
-        h1 {
-            text-align: center;
+        input[type="text"], input[type="submit"] {
+            width: 50%;
+            padding: 10px;
+            margin: 10px 0;
         }
-        p {
-            text-align: center;
-            text-decoration: underline; /* Unterstrichene Unterschrift */
+        input[type="submit"] {
+            background-color: rgb(25, 115, 205);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: rgb(20, 90, 180);
         }
         footer {
             background-color: #f1f1f1;
             text-align: center;
             padding: 15px;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
         }
         footer a {
             margin: 0 10px;
@@ -83,25 +111,40 @@ if ($gesamtpreis == 0) {
 <body>
 
 <header>
-    <img src="logo.png" alt="Autoshop Logo" class="logo">
+    <div>
+        <img src="images/logo.png" alt="Autoshop Logo" class="logo"> 
+    </div>
     <div class="header-links">
         <a href="index.php">Startseite</a>
-        <a href="warenkorb.php">Warenkorb</a>
-        <a href="kontakt.php">Kontakt</a>
+        <a href="warenkorb.php"><img src="images/shopping-cart-icon.png" alt="Warenkorb"></a> 
+        <a href="karte.php"><img src="images/karten-icon.png" alt="Standort"></a> 
     </div>
 </header>
 
 <main>
     <h1>Banküberweisung Zahlung</h1>
     <p>Gesamtbetrag: <strong><?php echo number_format($gesamtpreis, 2, ',', '.') . " €"; ?></strong></p>
-    <p>Bitte überweise den Gesamtbetrag auf das folgende Bankkonto:</p>
-    <p><strong>Bank: Musterbank</strong></p>
-    <p><strong>IBAN: DE12345678901234567890</strong></p>
-    <p><strong>BIC: MUSTDEFFXXX</strong></p>
-    <p>Verwendungszweck: Deine Bestellnummer #<?php echo rand(1000, 9999); ?></p>
 
-    <p>Nachdem die Zahlung eingegangen ist, werden wir deine Bestellung bearbeiten und versenden.</p>
-    <p>Bei Fragen stehen wir dir gerne zur Verfügung.</p>
+    <form method="post" action="zahlung_abschliessen.php">
+        <label for="vorname">Vorname:</label><br>
+        <input type="text" name="vorname" value="<?php echo htmlspecialchars($vorname); ?>" required><br>
+
+        <label for="nachname">Nachname:</label><br>
+        <input type="text" name="nachname" value="<?php echo htmlspecialchars($nachname); ?>" required><br>
+
+        <label for="adresse">Adresse:</label><br>
+        <input type="text" name="adresse" value="<?php echo htmlspecialchars($adresse); ?>" required><br><br>
+
+        <p>Bitte überweise den Gesamtbetrag auf das folgende Bankkonto:</p>
+        <p><strong>Bank: Musterbank</strong></p>
+        <p><strong>IBAN: DE12345678901234567890</strong></p>
+        <p><strong>BIC: MUSTDEFFXXX</strong></p>
+        <p>Verwendungszweck: Deine Bestellnummer #<?php echo rand(1000, 9999); ?></p>
+
+        <p>Nachdem die Zahlung eingegangen ist, werden wir deine Bestellung bearbeiten und versenden.</p>
+
+        <input type="submit" value="Bestellung abschließen">
+    </form>
 
     <p><a href="index.php">Zurück zur Startseite</a></p>
 </main>
