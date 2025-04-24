@@ -174,7 +174,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </main>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Datenschutzerklärung</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 </body>
