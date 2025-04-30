@@ -2,17 +2,22 @@
 session_start();
 require_once("dbconnection.php");
 
-// Anzahl der Autos pro Seite
+// Aktuelle Seite und Kategorie (früher: "kategorie" -> jetzt: "quelle")
 $limit = 20;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
+$quelle = isset($_GET['quelle']) && $_GET['quelle'] === 'pflegeprodukte' ? 'pflegeprodukte' : 'auto';
 
-// Autos aus der Datenbank holen
-$stmt = $pdo->prepare("SELECT aID, bezeichnung, model, preis FROM auto LIMIT :limit OFFSET :offset");
+// SQL-Abfrage je nach Quelle
+if ($quelle === 'pflegeprodukte') {
+    $stmt = $pdo->prepare("SELECT pfID AS id, pfname AS name, preis, bezeichnung FROM pflegeprodukte LIMIT :limit OFFSET :offset");
+} else {
+    $stmt = $pdo->prepare("SELECT aID AS id, bezeichnung AS name, preis, model AS zusatzinfo FROM auto LIMIT :limit OFFSET :offset");
+}
+
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
-
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -20,160 +25,100 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autoshop</title>
     <style>
-
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        min-height: 100vh;
-    }
-
-    header {
-        background-color: rgb(25, 115, 205);
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 30px;
-    }
-
-    .logo {
-        height: 50px;
-        width: auto;
-    }
-
-    .header-links {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .header-links a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .header-links img {
-        width: 30px;
-        height: 30px;
-    }
-
-    main {
-        padding: 50px 20px;
-    }
-
-    h1 {
-        text-align: center;
-    }
-
-    p {
-        text-align: center;
-        text-decoration: underline;
-    }
-
-    footer {
-        background-color: #f1f1f1;
-        text-align: center;
-        padding: 15px;
-        margin-top: auto;
-    }
-
-    footer a {
-        margin: 0 10px;
-        text-decoration: none;
-        color: black;
-    }
-
-    .car-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 30px;
-    }
-
-    .car-card {
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        padding: 20px;
-        width: 250px;
-    }
-
-    .car-card button {
-        padding: 8px 12px;
-        background-color: #1973cd;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .pagination {
-        margin-top: 40px;
-    }
-
-    .pagination a {
-        margin: 0 10px;
-        text-decoration: none;
-        color: #1973cd;
-        font-weight: bold;
-    }
-
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
+        header {
+            background-color: rgb(25, 115, 205);
+            color: white; display: flex;
+            justify-content: space-between;
+            align-items: center; padding: 15px 30px;
+        }
+        .logo { height: 50px; }
+        .header-links { display: flex; gap: 20px; }
+        .header-links a { color: white; text-decoration: none; font-weight: bold; }
+        main { padding: 40px 20px; }
+        .car-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .car-card {
+            border: 1px solid #ccc; border-radius: 10px;
+            padding: 20px; width: 250px;
+        }
+        .car-card button {
+            padding: 8px 12px; background-color: #1973cd;
+            color: white; border: none; border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination { margin-top: 30px; }
+        .pagination a {
+            margin: 0 10px; text-decoration: none;
+            color: #1973cd; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div>
-        <img src="images/logo.png" alt="Autoshop Logo" class="logo"> 
-    </div>
+    <div><img src="images/logo.png" alt="Autoshop Logo" class="logo"></div>
     <div class="header-links">
         <a href="login.php">Login</a>
-        <a href="warenkorb.php"><img src="images/shopping-cart-icon.png" alt="Warenkorb"></a> 
-        <a href="karte.php"><img src="images/karten-icon.png" alt="Standort"></a> 
+        <a href="warenkorb.php"><img src="images/shopping-cart-icon.png" alt="Warenkorb" width="30"></a>
+        <a href="karte.php"><img src="images/karten-icon.png" alt="Standort" width="30"></a>
     </div>
 </header>
 
 <main>
-    <h1>Willkommen im Autoshop</h1>
-    <p>Hier finden Sie die besten Autos zu den besten Preisen!</p>
+    <h1>Willkommen im Shop</h1>
 
-    <!-- Autos anzeigen -->
+    <form method="get" class="filter">
+        <label for="kategorie">Kategorie wählen:</label>
+        <select name="quelle" id="kategorie" onchange="this.form.submit()">
+            <option value="auto" <?= $quelle === 'auto' ? 'selected' : '' ?>>Autos</option>
+            <option value="pflegeprodukte" <?= $quelle === 'pflegeprodukte' ? 'selected' : '' ?>>Pflegeprodukte</option>
+        </select>
+    </form>
+
+    <br>
+
     <div class="car-container">
-    <?php foreach($result as $row): ?>
-        <div class="car-card">
-            <h3><?= htmlspecialchars($row['bezeichnung']) ?></h3>
-            <p><strong>Modell:</strong> <?= htmlspecialchars($row['model']) ?></p>
-            <p><strong>Preis:</strong> €<?= number_format($row['preis'], 2, ',', '.') ?></p>
-            <form action="autodetails.php" method="post">
-                <input type="hidden" name="auto_id" value="<?= $row['aID'] ?>">
-                <button type="submit">Mehr Infos hier</button>
-            </form>
-        </div>
-    <?php endforeach; ?>
+        <?php foreach ($result as $produkt): ?>
+            <div class="car-card">
+                <h3><?= htmlspecialchars($produkt['name']) ?></h3>
+
+                <?php if ($quelle === 'auto'): ?>
+                    <p><strong>Modell:</strong> <?= htmlspecialchars($produkt['zusatzinfo']) ?></p>
+                <?php else: ?>
+                    <p><strong>Beschreibung:</strong> <?= htmlspecialchars($produkt['bezeichnung']) ?></p>
+                <?php endif; ?>
+
+                <p><strong>Preis:</strong> €<?= number_format($produkt['preis'], 2, ',', '.') ?></p>
+
+                <?php if ($quelle === 'auto'): ?>
+                    <form action="autodetails.php" method="post">
+                        <input type="hidden" name="auto_id" value="<?= $produkt['id'] ?>">
+                        <input type="hidden" name="quelle" value="auto">
+                        <button type="submit">Mehr Infos hier</button>
+                    </form>
+                <?php else: ?>
+                    <form action="warenkorb.php" method="post">
+                        <input type="hidden" name="produkt_id" value="<?= $produkt['id'] ?>">
+                        <input type="hidden" name="produkt_name" value="<?= $produkt['name'] ?>">
+                        <input type="hidden" name="preis" value="<?= $produkt['preis'] ?>">
+                        <button type="submit">In den Warenkorb</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
     </div>
 
-    <!-- Blätterfunktion -->
     <div class="pagination">
         <?php if ($page > 1): ?>
-            <a href="?page=<?= $page - 1 ?>">&laquo; Zurück</a>
+            <a href="?quelle=<?= $quelle ?>&page=<?= $page - 1 ?>">&laquo; Zurück</a>
         <?php endif; ?>
-        <a href="?page=<?= $page + 1 ?>">Weiter &raquo;</a>
+        <a href="?quelle=<?= $quelle ?>&page=<?= $page + 1 ?>">Weiter &raquo;</a>
     </div>
 </main>
 
-<footer>
+<footer style="background:#f1f1f1; padding:15px; margin-top:40px;">
     <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 

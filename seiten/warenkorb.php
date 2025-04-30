@@ -8,24 +8,27 @@ if (!isset($_SESSION['warenkorb'])) {
 }
 
 // Falls ein Produkt hinzugefügt wird
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["auto_id"])) {
-    $auto_id = intval($_POST["auto_id"]);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // AUTO hinzufügen
+    if (isset($_POST["auto_id"])) {
+        $auto_id = intval($_POST["auto_id"]);
+        $sql = "SELECT aID AS id, bezeichnung AS name, preis FROM auto WHERE aID = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$auto_id]);
+        $produkt = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-    // Produkt aus der Datenbank holen
-    $sql = "SELECT * FROM auto WHERE aID = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$auto_id]);
-    $auto = $stmt->fetch(PDO::FETCH_ASSOC);
+    // PFLEGEPRODUKT hinzufügen
+    elseif (isset($_POST["produkt_id"])) {
+        $produkt_id = intval($_POST["produkt_id"]);
+        $sql = "SELECT pfID AS id, pfname AS name, preis FROM pflegeprodukte WHERE pfID = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$produkt_id]);
+        $produkt = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-    if ($auto) {
-        // Produkt zum Warenkorb hinzufügen (mit Produktdetails)
-        $produkt = [
-            'id' => $auto['aID'],
-            'name' => $auto['bezeichnung'],
-            'preis' => $auto['preis'],
-        ];
-
-        // Überprüfen, ob das Produkt bereits im Warenkorb ist
+    // Wenn ein Produkt gefunden wurde, hinzufügen
+    if (!empty($produkt)) {
         $exists = false;
         foreach ($_SESSION['warenkorb'] as $item) {
             if ($item['id'] === $produkt['id']) {
@@ -39,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["auto_id"])) {
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
