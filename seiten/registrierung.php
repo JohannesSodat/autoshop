@@ -1,6 +1,12 @@
 <?php
 session_start();
 require_once("dbconnection.php");
+require_once("themeHelper.php");
+
+// Default fallback theme if not set
+if (!isset($_SESSION['bg_color'])) {
+    $_SESSION['bg_color'] = 'standard';
+}
 ?>
 
 <!DOCTYPE html>
@@ -9,74 +15,9 @@ require_once("dbconnection.php");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrierung</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-        }
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-        }
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .header-links img {
-            width: 30px;
-            height: 30px;
-        }
-        .container {
-            width: 50%;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-        }
-        input[type="text"], input[type="password"], input[type="submit"], select, input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        input[type="submit"] {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: rgb(20, 90, 180);
-        }
-        footer {
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 15px;
-            width: 100%;
-            margin-top: auto;
-        }
-        footer a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="<?php echo getThemeClass(); ?>">
 
 <header>
     <div>
@@ -92,7 +33,6 @@ require_once("dbconnection.php");
 <div class="container">
     <h2>Registrierung</h2>
     <form method="post" action="registrierung.php">
-
         <label for="vorname">Vorname:</label>
         <input type="text" name="vorname" required>
 
@@ -124,11 +64,11 @@ require_once("dbconnection.php");
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $vorname = $_POST['vorname'];
-        $nachname = $_POST['nachname'];
-        $anrede = $_POST['anrede'];
-        $bg_color = $_POST['bg-color'];
-        $adresse = $_POST['adresse'];
+        $vorname = trim($_POST['vorname']);
+        $nachname = trim($_POST['nachname']);
+        $anrede = trim($_POST['anrede']);
+        $bg_color = trim($_POST['bg-color']);
+        $adresse = trim($_POST['adresse']);
         $geburtsdatum = $_POST['geburtsdatum'];
         $passwort = $_POST['passwort'];
 
@@ -136,7 +76,6 @@ require_once("dbconnection.php");
         $passwort_gehasht = password_hash($passwort, PASSWORD_DEFAULT);
 
         try {
-            // DB-Verbindung über dbconnection.php (muss $pdo enthalten)
             $sql = "INSERT INTO user (vorname, nachname, anrede, bg_color, adresse, geburtsdatum, passwort) 
                     VALUES (:vorname, :nachname, :anrede, :bg_color, :adresse, :geburtsdatum, :passwort)";
             $stmt = $pdo->prepare($sql);
@@ -151,15 +90,19 @@ require_once("dbconnection.php");
             ]);
 
             echo "<p style='color:green;'>Registrierung erfolgreich! Du kannst dich jetzt <a href='login.php'>einloggen</a>.</p>";
+
+            // Session Theme setzen, damit es sofort greift
+            $_SESSION['bg_color'] = $bg_color;
+
         } catch (PDOException $e) {
-            echo "<p style='color:red;'>Fehler bei der Registrierung: " . $e->getMessage() . "</p>";
+            echo "<p style='color:red;'>Fehler bei der Registrierung: " . htmlspecialchars($e->getMessage()) . "</p>";
         }
     }
     ?>
 </div>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 </body>

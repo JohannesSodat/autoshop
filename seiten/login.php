@@ -1,6 +1,12 @@
 <?php
-    session_start();
-    require_once("dbconnection.php");
+session_start();
+require_once("dbconnection.php");
+require_once("themeHelper.php");
+
+// Set default theme if not set
+if (!isset($_SESSION['bg_color'])) {
+    $_SESSION['bg_color'] = 'standard'; // or 'eisberg'
+}
 ?>
 
 <!DOCTYPE html>
@@ -9,77 +15,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-        }
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .header-links img {
-            width: 30px;
-            height: 30px;
-        }
-        .container {
-            width: 50%;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            flex: 1;
-        }
-        input[type="text"], input[type="password"], input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        input[type="submit"] {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: rgb(20, 90, 180);
-        }
-        footer {
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 15px;
-        }
-        footer a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="<?php echo getThemeClass(); ?>">
+
 
 <header>
     <div>
@@ -117,7 +56,7 @@
 </div>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 </body>

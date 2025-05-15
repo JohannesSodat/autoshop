@@ -8,7 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $passwort = $_POST['passwort'];
 
     try {
-
         $sql = "SELECT * FROM user WHERE vorname = :vorname AND nachname = :nachname";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -18,9 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($passwort, $user['passwort'])) {
+            // Benutzerdaten in der Session speichern
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['vorname'] = $user['vorname'];
             $_SESSION['nachname'] = $user['nachname'];
+            $_SESSION['bg_color'] = $user['bg_color'] ?? 'standard'; // fallback auf 'standard' falls leer
 
             // Weiterleitung auf Startseite oder Dashboard
             header("Location: index.php");
@@ -35,4 +36,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
-

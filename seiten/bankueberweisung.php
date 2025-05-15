@@ -1,6 +1,12 @@
 <?php
 session_start();
 require_once("dbconnection.php");
+require_once("themeHelper.php");
+
+// Set default theme if not set
+if (!isset($_SESSION['bg_color'])) {
+    $_SESSION['bg_color'] = 'standard';
+}
 
 // Gesamtpreis berechnen
 $gesamtpreis = 0;
@@ -43,72 +49,9 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banküberweisung Zahlung</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-        }
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .header-links img {
-            width: 30px;
-            height: 30px;
-        }
-        main {
-            padding: 50px 20px;
-            flex: 1;
-        }
-        input[type="text"], input[type="submit"] {
-            width: 50%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        input[type="submit"] {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: rgb(20, 90, 180);
-        }
-        footer {
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 15px;
-        }
-        footer a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="<?php echo getThemeClass(); ?>">
 
 <header>
     <div>
@@ -150,7 +93,7 @@ if (isset($_SESSION['user_id'])) {
 </main>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 </body>

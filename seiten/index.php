@@ -1,14 +1,27 @@
 <?php
 session_start();
 require_once("dbconnection.php");
+require_once("themeHelper.php");
 
-// Aktuelle Seite und Kategorie (früher: "kategorie" -> jetzt: "quelle")
+// Theme aus DB holen
+$bg_color = 'standard'; // Default-Wert
+
+if (isset($_SESSION['user_id'])) {
+    $stmt_theme = $pdo->prepare("SELECT bg_color FROM user WHERE id = :id");
+    $stmt_theme->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt_theme->execute();
+    $user = $stmt_theme->fetch(PDO::FETCH_ASSOC);
+
+    $bg_color = htmlspecialchars($_SESSION['bg_color']); // XSS-Schutz
+}
+
+// Aktuelle Seite und Kategorie
 $limit = 20;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
 $quelle = isset($_GET['quelle']) && $_GET['quelle'] === 'pflegeprodukte' ? 'pflegeprodukte' : 'auto';
 
-// SQL-Abfrage je nach Quelle
+// SQL je nach Quelle
 if ($quelle === 'pflegeprodukte') {
     $stmt = $pdo->prepare("SELECT pfID AS id, pfname AS name, preis, bezeichnung FROM pflegeprodukte LIMIT :limit OFFSET :offset");
 } else {
@@ -26,36 +39,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Autoshop</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white; display: flex;
-            justify-content: space-between;
-            align-items: center; padding: 15px 30px;
-        }
-        .logo { height: 50px; }
-        .header-links { display: flex; gap: 20px; }
-        .header-links a { color: white; text-decoration: none; font-weight: bold; }
-        main { padding: 40px 20px; }
-        .car-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-        .car-card {
-            border: 1px solid #ccc; border-radius: 10px;
-            padding: 20px; width: 250px;
-        }
-        .car-card button {
-            padding: 8px 12px; background-color: #1973cd;
-            color: white; border: none; border-radius: 5px;
-            cursor: pointer;
-        }
-        .pagination { margin-top: 30px; }
-        .pagination a {
-            margin: 0 10px; text-decoration: none;
-            color: #1973cd; font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+
+<body class="<?php echo getThemeClass(); ?>">
 
 <header>
     <div><img src="images/logo.png" alt="Autoshop Logo" class="logo"></div>
@@ -118,7 +105,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </main>
 
-<footer style="background:#f1f1f1; padding:15px; margin-top:40px;">
+<footer>
     <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 

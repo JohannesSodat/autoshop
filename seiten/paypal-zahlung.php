@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("dbconnection.php");
+require_once("themeHelper.php");
 
 // Gesamtpreis berechnen
 $gesamtpreis = 0;
@@ -24,107 +25,9 @@ $currency = "EUR";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zahlung</title>
     <script src="https://www.paypal.com/sdk/js?client-id=DEIN_PAYPAL_CLIENT_ID&currency=<?php echo $currency; ?>"></script>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            min-height: 100vh;
-            background-color: #f9f9f9;
-        }
-
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-        }
-
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .header-links img {
-            width: 30px;
-            height: 30px;
-        }
-
-        main {
-            padding: 50px 20px;
-            flex: 1;
-        }
-
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .betrag {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        #paypal-button-container {
-            max-width: 400px;
-            margin: 0 auto 20px;
-        }
-
-        .weiter-button {
-            background-color: #1973cd;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .weiter-button:hover {
-            background-color: #125a9c;
-        }
-
-        footer {
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 15px;
-            margin-top: auto;
-        }
-
-        footer a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="<?php echo getThemeClass(); ?>">
 
 <header>
     <div>
@@ -150,7 +53,7 @@ $currency = "EUR";
 </main>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 <script>

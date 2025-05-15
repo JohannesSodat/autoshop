@@ -1,19 +1,60 @@
+/* === Standard Design === */
+.theme-standard {
+    --bg-color: #f9f9f9;
+    --text-color: #333;
+    --header-bg: rgb(25, 115, 205);
+    --button-bg: #1973cd;
+    --button-hover-bg: rgb(20, 90, 180);
+    --footer-bg: #f1f1f1;
+}
+
+/* === Eisberg Design (kühler, dunkler) === */
+.theme-eisberg {
+    --bg-color: #1e2a38;
+    --text-color: #d1e3f0;
+    --header-bg: #294f6d;
+    --button-bg: #3a6d8c;
+    --button-hover-bg: #2b546f;
+    --footer-bg: #16222e;
+}
+
+/* === Dark Mode === */
+.theme-dark {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --header-bg: #1f1f1f;
+    --button-bg: #333;
+    --button-hover-bg: #444;
+    --footer-bg: #1a1a1a;
+}
+
+/* === Sonnig Design === */
+.theme-sonnig {
+    --bg-color: #fff8e1;
+    --text-color: #4a3c00;
+    --header-bg: #f9a825;
+    --button-bg: #ffb300;
+    --button-hover-bg: #ffa000;
+    --footer-bg: #ffe082;
+}
+
+/* === Grundlegendes Layout & Reset (für alle Themes) === */
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
     font-family: Arial, sans-serif;
     text-align: center;
-    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
+/* === Header / Navigation === */
 header {
-    background-color: rgb(25, 115, 205);
+    background-color: var(--header-bg);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -43,37 +84,95 @@ header {
     height: 30px;
 }
 
+/* === Main Bereich === */
 main {
     padding: 50px 20px;
+    flex: 1;
 }
 
-h1 {
-    text-align: center;
-}
-
-p {
-    text-align: center;
-    text-decoration: underline;
-}
-
+/* === Footer === */
 footer {
-    background-color: #f1f1f1;
+    background-color: var(--footer-bg);
     text-align: center;
     padding: 15px;
+    width: 100%;
     margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: var(--text-color);
 }
 
 footer a {
     margin: 0 10px;
     text-decoration: none;
+    color: inherit;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* === Buttons === */
+button, input[type="submit"], a.button {
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+button:hover,
+input[type="submit"]:hover,
+a.button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* Spezielle Buttons */
+.paypal {
+    background-color: #ffc439;
     color: black;
+}
+
+.bank {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.shoppen {
+    background-color: #f35e13;
+    color: white;
+}
+
+/* === Container & Cards === */
+.container,
+.wrapper,
+.cart-container {
+    width: 90%;
+    max-width: 900px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: left;
+}
+
+.cart-container {
+    padding: 20px;
 }
 
 .car-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 20px;
+    justify-content: center;
     margin-top: 30px;
 }
 
@@ -82,15 +181,7 @@ footer a {
     border-radius: 10px;
     padding: 20px;
     width: 250px;
-}
-
-.car-card button {
-    padding: 8px 12px;
-    background-color: #1973cd;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    text-align: center;
 }
 
 .pagination {
@@ -100,6 +191,107 @@ footer a {
 .pagination a {
     margin: 0 10px;
     text-decoration: none;
-    color: #1973cd;
+    color: var(--button-bg);
     font-weight: bold;
+}
+
+/* === Formulare === */
+input[type="text"],
+input[type="password"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+input[type="submit"] {
+    width: auto;
+}
+
+/* === Headings & Text === */
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+p.underline {
+    text-decoration: underline;
+}
+
+/* === Spezielle Elemente === */
+#paypal-button-container {
+    max-width: 400px;
+    margin: 0 auto 20px;
+}
+
+.pay-buttons {
+    margin-top: 20px;
+}
+
+.pay-buttons button {
+    margin: 10px;
+}
+
+/* === Dark Mode & Eisberg Mode: Verbesserte Lesbarkeit in Formularen, Footer & Warenkorb-Icon === */
+
+.theme-dark,
+.theme-eisberg {
+    /* Container & Formulare dunkler Hintergrund + helle Schrift */
+    --container-bg: #2a2a2a;
+    --container-text: #ddd;
+    --container-shadow: rgba(0, 0, 0, 0.6);
+}
+
+.theme-dark .container,
+.theme-dark .wrapper,
+.theme-dark .cart-container,
+.theme-eisberg .container,
+.theme-eisberg .wrapper,
+.theme-eisberg .cart-container {
+    background-color: var(--container-bg);
+    color: var(--container-text);
+    box-shadow: 0 4px 12px var(--container-shadow);
+}
+
+.theme-dark input[type="text"],
+.theme-dark input[type="password"],
+.theme-dark input[type="date"],
+.theme-dark select,
+.theme-eisberg input[type="text"],
+.theme-eisberg input[type="password"],
+.theme-eisberg input[type="date"],
+.theme-eisberg select {
+    background-color: #444;
+    color: #eee;
+    border: 1px solid #666;
+}
+
+/* Footer Textfarbe im Dark Mode und Eisberg besser lesbar */
+.theme-dark footer,
+.theme-eisberg footer {
+    color: #eee;
+}
+
+/* Warenkorb Icon im Dark Mode und Eisberg invertieren für bessere Sichtbarkeit */
+.theme-dark .header-links a[href="karte.php"] img,
+.theme-dark .header-links a[href="warenkorb.php"] img,
+.theme-eisberg .header-links a[href="karte.php"] img,
+.theme-eisberg .header-links a[href="warenkorb.php"] img {
+    filter: invert(100%);
+}
+
+/* Footer Schriftfarbe auf der index.php (Standard Theme) grau auf weiß */
+.theme-standard footer {
+    color: #555;
 }

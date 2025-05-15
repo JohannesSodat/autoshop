@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("dbconnection.php");
+require_once("themeHelper.php"); // Theme-Funktion einbinden
 
 // Prüfen, ob der Warenkorb existiert, andernfalls initialisieren
 if (!isset($_SESSION['warenkorb'])) {
@@ -42,88 +43,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Warenkorb</title>
-    <style>
-         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-        }
-        header {
-            background-color: rgb(25, 115, 205);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-        }
-        .cart-container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            text-align: left;
-        }
-        .cart-item {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-        }
-        .pay-buttons {
-            margin-top: 20px;
-        }
-        .pay-buttons button {
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        img {
-            width: 30px;
-            height: 30px;
-        }
-        .paypal {
-            background-color: #ffc439;
-        }
-        .bank {
-            background-color: #4CAF50;
-            color: white;
-        }
-        footer {
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 15px;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-        footer a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-        }   
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="<?php echo getThemeClass(); ?>">
 
 <header>
     <h1>Dein Warenkorb</h1>
@@ -131,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="header-links">
         <a href="index.php">Startseite</a>
         <a href="login.php">Login</a>
-        <a href="karte.php"><img src="images/karten-icon.png" alt="Standort"></a> 
+        <a href="karte.php"><img src="images/karten-icon.png" alt="Standort" /></a>
     </div>
 </header>
 
@@ -156,11 +86,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="pay-buttons">
         <button class="paypal" onclick="window.location.href='paypal-zahlung.php'">Mit PayPal zahlen</button>
         <button class="bank" onclick="window.location.href='bankueberweisung.php'">Per Banküberweisung zahlen</button>
+        <button class="shoppen" onclick="window.location.href='index.php'">Weitershoppen</button>
     </div>
 </div>
 
 <footer>
-    <a href="impressum.php">Impressum</a> | <a href="kontakt.php">Kontakt</a>
+    <a href="impressum.php">Impressum und Kontakt</a> | <a href="datenschutz.php">Datenschutzerklärung</a>
 </footer>
 
 </body>
