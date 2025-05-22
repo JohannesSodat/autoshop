@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($user && password_verify($passwort, $user['passwort'])) {
             // Benutzerdaten in der Session speichern
-            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_id'] = $user['user_ID'];
             $_SESSION['vorname'] = $user['vorname'];
             $_SESSION['nachname'] = $user['nachname'];
             $_SESSION['bg_color'] = $user['bg_color'] ?? 'standard'; // fallback auf 'standard' falls leer

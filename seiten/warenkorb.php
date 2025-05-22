@@ -60,7 +60,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="header-links">
         <a href="index.php">Startseite</a>
-        <a href="login.php">Login</a>
+        <?php if (isset($_SESSION['vorname'])): ?>
+            <a href="accountManaging.php">Account</a>
+        <?php else: ?>
+            <a href="login.php">Login</a>
+        <?php endif; ?>
         <a href="karte.php"><img src="images/karten-icon.png" alt="Standort" /></a>
     </div>
 </header>

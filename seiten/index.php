@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once("dbconnection.php");
 require_once("themeHelper.php");
 
@@ -7,7 +8,7 @@ require_once("themeHelper.php");
 $bg_color = 'standard'; // Default-Wert
 
 if (isset($_SESSION['user_id'])) {
-    $stmt_theme = $pdo->prepare("SELECT bg_color FROM user WHERE id = :id");
+    $stmt_theme = $pdo->prepare("SELECT bg_color FROM user WHERE user_ID = :id");
     $stmt_theme->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt_theme->execute();
     $user = $stmt_theme->fetch(PDO::FETCH_ASSOC);
@@ -47,7 +48,12 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <header>
     <div><img src="images/logo.png" alt="Autoshop Logo" class="logo"></div>
     <div class="header-links">
-        <a href="login.php">Login</a>
+        <?php if (isset($_SESSION['vorname'])): ?>
+            <a href="accountManaging.php">Account</a>
+        <?php else: ?>
+            <a href="login.php">Login</a>
+        <?php endif; ?>
+
         <a href="warenkorb.php"><img src="images/shopping-cart-icon.png" alt="Warenkorb" width="30"></a>
         <a href="karte.php"><img src="images/karten-icon.png" alt="Standort" width="30"></a>
     </div>
