@@ -45,7 +45,13 @@ if (!isset($_SESSION['bg_color'])) {
 
         <input type="submit" value="Login">
         <p>Du hast noch kein Konto? <a href="registrierung.php">Jetzt registrieren</a></p>
+        <p>Du willst auf den Admin Bereich zugreifen?<a href="admin_login.php">Admin Login</a></p>
+
+        
+
     </form>
+
+
 
     <?php
     if (isset($_SESSION['login_error'])) {
